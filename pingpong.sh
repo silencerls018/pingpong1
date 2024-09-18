@@ -43,21 +43,21 @@ install_and_create_screen_session() {
     echo "screen installed and session 'pingpong_main' created."
 }
 
-# 函数：添加设备ID并在 pingpong_main 会话中运行 PingPong 应用
+# 函数：在新的 screen 会话中添加设备ID并运行 PingPong 应用
 add_device_id() {
     read -p "请输入你的设备ID: " device_id
     if [[ -z "$device_id" ]]; then
         echo "设备ID不能为空，请重试。"
     else
-        echo "Starting PingPong app in screen session 'pingpong_main' with your device ID..."
-        screen -S pingpong_main -p 0 -X stuff "cd $HOME && sudo ./PINGPONG --key \"$device_id\"\n"
-        echo "PingPong app started with your device ID in screen session 'pingpong_main'."
+        echo "Starting PingPong app in a new screen session 'pingpong_main' with your device ID..."
+        screen -dmS pingpong_main bash -c "cd $HOME && sudo ./PINGPONG --key \"$device_id\"; exec bash"
+        echo "PingPong app started with your device ID in new screen session 'pingpong_main'."
         echo "请使用以下命令进入该会话，并执行相关操作："
         echo "screen -r pingpong_main"
     fi
 }
 
-# 函数：配置 AIOZ 账户（在新的 screen 会话中）
+# 函数：配置 AIOZ 账户
 configure_aioz() {
     read -p "请输入你的 AIOZ 账户: " aioz_account
     if [[ -z "$aioz_account" ]]; then
@@ -82,7 +82,7 @@ show_menu() {
     echo "1. 安装 Docker"
     echo "2. 下载和安装 PingPong 应用"
     echo "3. 安装 screen 并创建 PingPong 会话"
-    echo "4. 添加设备ID并运行 PingPong 应用（在 screen 会话 'pingpong_main' 中）"
+    echo "4. 添加设备ID并运行 PingPong 应用（在新的 screen 会话 'pingpong_main' 中）"
     echo "5. 查看日志 (Ctrl + A + D 退出)"
     echo "6. 配置 AIOZ 账户"
     echo "7. 退出"
