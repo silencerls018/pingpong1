@@ -76,6 +76,27 @@ view_logs() {
     screen -r pingpong_main
 }
 
+# 函数：删除所有相关的文件和会话（除了 Docker 和 screen）
+cleanup() {
+    echo "Deleting PingPong related files and screen sessions..."
+    cd $HOME
+
+    # 删除 PingPong 应用
+    if [[ -f "PINGPONG" ]]; then
+        sudo rm -f PINGPONG
+        echo "Deleted PINGPONG application."
+    else
+        echo "PINGPONG application not found."
+    fi
+
+    # 删除所有相关的 screen 会话
+    screen -list | grep 'pingpong_' | awk '{print $1}' | while read -r session; do
+        echo "Killing screen session $session..."
+        screen -S "$session" -X quit
+    done
+    echo "All related screen sessions have been deleted."
+}
+
 # 菜单选项
 show_menu() {
     echo "请选择一个操作:"
@@ -85,13 +106,14 @@ show_menu() {
     echo "4. 添加设备ID并运行 PingPong 应用（在新的 screen 会话 'pingpong_main' 中）"
     echo "5. 查看日志 (Ctrl + A + D 退出)"
     echo "6. 配置 AIOZ 账户"
-    echo "7. 退出"
+    echo "7. 删除所有与 PingPong 相关的文件和会话（不包括 Docker 和 screen）"
+    echo "8. 退出"
 }
 
 # 主循环
 while true; do
     show_menu
-    read -p "请输入选项 (1/2/3/4/5/6/7): " choice
+    read -p "请输入选项 (1/2/3/4/5/6/7/8): " choice
     case $choice in
         1)
             install_docker
@@ -112,11 +134,14 @@ while true; do
             configure_aioz
             ;;
         7)
+            cleanup
+            ;;
+        8)
             echo "退出脚本。"
             exit 0
             ;;
         *)
-            echo "无效选项，请输入 1, 2, 3, 4, 5, 6 或 7."
+            echo "无效选项，请输入 1, 2, 3, 4, 5, 6, 7 或 8."
             ;;
     esac
 done
