@@ -39,43 +39,43 @@ install_and_create_screen_session() {
     echo "Installing screen..."
     sudo apt install -y screen
     echo "Creating a new screen session for PingPong app..."
-    screen -dmS pingpong
-    echo "screen installed and session 'pingpong' created."
+    screen -dmS pingpong_main
+    echo "screen installed and session 'pingpong_main' created."
 }
 
-# 函数：添加设备ID并运行 PingPong 应用（在新的 screen 会话中）
+# 函数：进入已经创建的 screen 会话
+view_logs() {
+    echo "Viewing logs in screen session 'pingpong_main'..."
+    echo "Press Ctrl + A + D to detach from the session."
+    screen -r pingpong_main
+}
+
+# 函数：添加设备ID并运行 PingPong 应用
 add_device_id() {
     read -p "请输入你的设备ID: " device_id
     if [[ -z "$device_id" ]]; then
         echo "设备ID不能为空，请重试。"
     else
-        echo "Starting PingPong app in a new screen session with your device ID..."
-        screen -dmS pingpong_id bash -c "cd $HOME && sudo ./PINGPONG --key \"$device_id\"; exec bash"
-        echo "PingPong app started with your device ID in screen session 'pingpong_id'."
-        echo "请使用以下命令进入该会话，并执行相关操作："
-        echo "screen -r pingpong_id"
+        echo "Starting PingPong app with your device ID..."
+        cd $HOME
+        sudo ./PINGPONG --key "$device_id"
+        echo "PingPong app started with your device ID."
     fi
 }
 
-# 函数：配置 AIOZ 账户（在新的 screen 会话中）
+# 函数：配置 AIOZ 账户
 configure_aioz() {
     read -p "请输入你的 AIOZ 账户: " aioz_account
     if [[ -z "$aioz_account" ]]; then
         echo "AIOZ 账户不能为空，请重试。"
     else
         echo "配置 AIOZ 并运行相关命令..."
-        screen -dmS aioz_config bash -c "cd $HOME && sudo ./PINGPONG config set --aioz=\"$aioz_account\" && sudo ./PINGPONG stop --depins=aioz && sudo ./PINGPONG start --depins=aioz; exec bash"
-        echo "AIOZ 配置完成并已启动，在 screen 会话 'aioz_config' 中执行。"
-        echo "请使用以下命令进入该会话，并执行相关操作："
-        echo "screen -r aioz_config"
+        cd $HOME
+        sudo ./PINGPONG config set --aioz="$aioz_account"
+        sudo ./PINGPONG stop --depins=aioz
+        sudo ./PINGPONG start --depins=aioz
+        echo "AIOZ 配置完成并已启动。"
     fi
-}
-
-# 函数：查看日志 (Ctrl + A + D 退出)
-view_logs() {
-    echo "Viewing logs in screen session 'pingpong'..."
-    echo "按 Ctrl + A + D 退出日志查看。"
-    screen -r pingpong
 }
 
 # 菜单选项
@@ -84,9 +84,9 @@ show_menu() {
     echo "1. 安装 Docker"
     echo "2. 下载和安装 PingPong 应用"
     echo "3. 安装 screen 并创建 PingPong 会话"
-    echo "4. 添加设备ID并运行 PingPong 应用（新 screen 会话）"
+    echo "4. 添加设备ID并运行 PingPong 应用"
     echo "5. 查看日志 (Ctrl + A + D 退出)"
-    echo "6. 配置 AIOZ 账户（新 screen 会话）"
+    echo "6. 配置 AIOZ 账户"
     echo "7. 退出"
 }
 
