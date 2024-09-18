@@ -115,4 +115,34 @@ show_menu() {
 while true; do
     show_menu
     read -p "请输入选项 (1/2/3/4/5/6/7/8): " choice
-    case $choice
+    case $choice in
+        1)
+            install_docker
+            ;;
+        2)
+            install_pingpong
+            ;;
+        3)
+            install_and_create_screen_session
+            ;;
+        4)
+            add_device_id
+            ;;
+        5)
+            view_logs
+            ;;
+        6)
+            configure_aioz
+            ;;
+        7)
+            cleanup
+            ;;
+        8)
+            echo "退出脚本。"
+            exit 0
+            ;;
+        *)
+            echo "无效选项，请输入 1, 2, 3, 4, 5, 6, 7 或 8."
+            ;;
+    esac
+done
